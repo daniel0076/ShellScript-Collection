@@ -14,7 +14,7 @@ dialog --ok-label 'But...I want google reader QAQ' --title 'The next(?) generati
 |_||   \_\\  (_________//  (_________//     |   \|  | |  |  __
                                             |  . `  | |  | |_ |
                                             |  |\   | |  |__| |
-                                            |__| \__|  \______| 
+                                            |__| \__|  \______|
 
                        Powered By mushr00m
 ' 16 70
@@ -125,7 +125,7 @@ delete(){
             choice=`cat $tmp`
             del=/^`cat $tmp`/d
             store=`cat $feed_ls|grep $choice|awk '{print $2}'`
-            rm -r $dir/$store*
+            rm -rf $dir/$store*
             sed -i -e $del $feed_ls
             dialog --title 'Deleted' --msgbox 'Success' 5 20
             cat $feed_ls|awk '{print NR,$2,$3}' > $tmp
@@ -151,7 +151,7 @@ update(){
     done < $feed_ls
     echo "$DIALOG"|xargs dialog 2>$tmp
     options=`cat $tmp`
-    for no in $options;do 
+    for no in $options;do
         feed_url=`cat $feed_ls |grep ^$no|awk '{print $3}'`
         feed_title=`cat $feed_ls |grep ^$no|awk '{print $2}'`
         if [ ! -d $dir/${feed_title}.articles ];then
