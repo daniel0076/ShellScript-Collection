@@ -5,12 +5,12 @@ dir=$HOME/.feed
 feed_ls="$dir/feed.list"
 py3=`which python3`
 welcome(){
-dialog --ok-label 'But...I want google reader QAQ' --title 'The next(?) generation RSS Reader' --no-collapse --cr-wrap --msgbox '
+dialog --ok-label 'But...I want google reader QAQ' --title 'The Next(?) Generation RSS Reader' --no-collapse --cr-wrap --msgbox '
  ________      ________      ________
 /  ____  \\   /  ______))   /  ______))
-| ||___)  || |  ((_____    |  ((_____
+| ||___) ||  |  ((_____    |  ((_____
 |  ___  _//   \ _____  \\   \ _____  \\     .__   __.   ______
-| ||  \ \\    ______ )  ||  ______ )  ||    |  \ |  |  /  ____|
+| ||  \ \\    _______) ||   _______) ||     |  \ |  |  /  ____|
 |_||   \_\\  (_________//  (_________//     |   \|  | |  |  __
                                             |  . `  | |  | |_ |
                                             |  |\   | |  |__| |
@@ -37,7 +37,7 @@ dialog --clear --title "Main Menu" \
 }
 subscribe(){
     tmp=`env mktemp $dir/tmp.XXX`
-    dialog --title "Subscribe" --clear --inputbox "Enter feed url (only support xml format)" 10 50 2>$tmp
+    dialog --title "Subscribe" --clear --inputbox "Enter feed url:" 10 50 2>$tmp
     url=`env cat $tmp`
     if [ -z $url ];then
         dialog --title 'Error!' --msgbox 'No url input' 5 20
