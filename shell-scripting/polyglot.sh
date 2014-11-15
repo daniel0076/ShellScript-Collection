@@ -87,7 +87,8 @@ for key in $arr;do
     fi
     if echo $key |env grep -cE '^[Hh]askell$|^hs$' > /dev/null;then
         polyglot=`env which ghc`
-        $polyglot $src
+        $polyglot $src -o $o_name;./$o_name
+        rm -f *.o *.hi
     fi
     if echo $key |env grep -cE '^[Ll]ua$' > /dev/null;then
         polyglot=`env which lua52`

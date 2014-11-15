@@ -3,7 +3,7 @@ if [ ! -d $HOME/.feed ];then
 fi
 dir=$HOME/.feed
 feed_ls="$dir/feed.list"
-py3=`which python3`
+py3=`env which python3`
 welcome(){
 dialog --ok-label 'But...I want google reader QAQ' --title 'The Next(?) Generation RSS Reader' --no-collapse --cr-wrap --msgbox '
  ________      ________      ________
@@ -22,7 +22,7 @@ menu
 }
 
 menu(){
-rm $dir/tmp.*
+rm -f $dir/tmp.*
 tmp=`env mktemp $dir/tmp.XXX`
 dialog --clear --title "Main Menu" \
         --menu "Choose an action" 12 40 10 \
@@ -32,7 +32,7 @@ dialog --clear --title "Main Menu" \
         "U" "Update subscription" \
         "Q"  "Leave RSSng" 2>$tmp
         choice=`cat $tmp`
-        rm $tmp
+        rm -f $tmp
         action $choice
 }
 subscribe(){
@@ -150,20 +150,20 @@ update(){
         DIALOG="$DIALOG $n $t 0"
     done < $feed_ls
     echo "$DIALOG"|xargs dialog 2>$tmp
-    options=`cat $tmp`
+    options=`env cat $tmp|tr -d \"`
     for no in $options;do
         feed_url=`cat $feed_ls |grep ^$no|awk '{print $3}'`
         feed_title=`cat $feed_ls |grep ^$no|awk '{print $2}'`
         if [ ! -d $dir/${feed_title}.articles ];then
             mkdir $dir/${feed_title}.articles
         fi
-        rm $dir/${feed_title}.items
+        rm -f $dir/${feed_title}.items
         item_count=`env $py3 feed.py -u $feed_url -i|wc -l`
         item_count=$(($item_count/3))
         i=0
         counter=0
         while [ $i -lt $item_count ] ; do
-            env $py3 feed.py -u $feed_url -n $i >$tmp
+            $py3 feed.py -u $feed_url -n $i >$tmp
             cat $tmp |sed -ne '1p' >>$dir/${feed_title}.items
             cat $tmp |sed -ne '1p' >$dir/${feed_title}.articles/$i
             echo "===================================================">>$dir/${feed_title}.articles/$i
