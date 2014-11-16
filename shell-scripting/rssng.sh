@@ -164,7 +164,7 @@ update(){
         counter=0
         while [ $i -lt $item_count ] ; do
             $py3 feed.py -u $feed_url -n $i >$tmp
-            cat $tmp |sed -ne '1p' >>$dir/${feed_title}.items
+            cat $tmp|sed "s/\"/'/g" |sed -ne '1p' >>$dir/${feed_title}.items
             cat $tmp |sed -ne '1p' >$dir/${feed_title}.articles/$i
             echo "===================================================">>$dir/${feed_title}.articles/$i
             cat $tmp |sed -ne '2p'|sed  -e 's/^http:/Feed URL: http:/' >> $dir/${feed_title}.articles/$i
