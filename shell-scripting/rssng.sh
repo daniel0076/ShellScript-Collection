@@ -5,7 +5,7 @@ dir=$HOME/.feed
 feed_ls="$dir/feed.list"
 py3=`env which python3`
 welcome(){
-dialog --ok-label 'But...I want google reader QAQ' --title 'The Next(?) Generation RSS Reader' --no-collapse --cr-wrap --msgbox '
+dialog --ascii-lines --ok-label 'But...I want google reader QAQ' --title 'The Next(?) Generation RSS Reader' --no-collapse --cr-wrap --msgbox '
  ________      ________      ________
 /  ____  \\   /  ______))   /  ______))
 | ||___) ||  |  ((_____    |  ((_____
@@ -24,7 +24,7 @@ menu
 menu(){
 rm -f $dir/tmp.*
 tmp=`env mktemp $dir/tmp.XXX`
-dialog --clear --title "Main Menu" \
+dialog --ascii-lines --clear --title "Main Menu" \
         --menu "Choose an action" 12 40 10 \
         "R"  "Read subscribed feeds" \
         "S" "Subscribe new feed" \
@@ -37,18 +37,18 @@ dialog --clear --title "Main Menu" \
 }
 subscribe(){
     tmp=`env mktemp $dir/tmp.XXX`
-    dialog --title "Subscribe" --clear --inputbox "Enter feed url:" 10 50 2>$tmp
+    dialog --ascii-lines --title "Subscribe" --clear --inputbox "Enter feed url:" 10 50 2>$tmp
     url=`env cat $tmp`
     if [ -z $url ];then
-        dialog --title 'Error!' --msgbox 'No url input' 5 20
+        dialog --ascii-lines --title 'Error!' --msgbox 'No url input' 5 20
         return
     else
         title=`env $py3 feed.py -u $url -t|sed 's/ /_/g'`
         if [ "$title" = "Something_got_wrong_o_O!" ] || [ -z $title ];then
-            dialog --title 'Not valid url' --msgbox 'Cannot not resolve the url' 5 40
+            dialog --ascii-lines --title 'Not valid url' --msgbox 'Cannot not resolve the url' 5 40
             return
         elif (cat $feed_ls| grep -c $title);then
-            dialog --title 'Oops' --msgbox 'URL is already subscribed!' 5 40
+            dialog --ascii-lines --title 'Oops' --msgbox 'URL is already subscribed!' 5 40
             return
         fi
         echo "x $title $url" >> $feed_ls
@@ -59,10 +59,10 @@ subscribe(){
 select_feed(){
     tmp=`env mktemp $dir/tmp.XXX`
     if [ ! -s $feed_ls ];then
-        dialog --title 'Empty' --msgbox 'List empty, Subscribe first' 5 35
+        dialog --ascii-lines --title 'Empty' --msgbox 'List empty, Subscribe first' 5 35
         return
     fi
-    DIALOG='  --menu "Feeds" 12 40 10'
+    DIALOG=' --ascii-lines --menu "Feeds" 12 40 10'
     while read n t u;do
         t=`echo $t|sed 's/_/ /g'|awk '{printf "\"%s\"",$0}'`
         DIALOG="$DIALOG $n $t"
@@ -79,7 +79,7 @@ select_feed(){
             return
             ;;
         255)
-            dialog --title 'Oops' --msgbox 'ESC Pressed' 5 20
+            dialog --ascii-lines --title 'Oops' --msgbox 'ESC Pressed' 5 20
     esac
 
 }
@@ -87,12 +87,12 @@ read_rss(){
     tmp=`env mktemp $dir/tmp.XXX`
     feed_items=$dir/${1}.items
     if [ ! -s $feed_items ];then
-        dialog --title 'Empty' --msgbox 'No items for the feed, update first' 5 45
+        dialog --ascii-lines --title 'Empty' --msgbox 'No items for the feed, update first' 5 45
         return
     else
         t=`echo $1|sed 's/_/ /g'|awk '{printf "\"%s\"",$0}'`
         items=`cat $feed_items`
-        DIALOG=" --clear --title $t --menu 'Articles' 30 80 30 $items"
+        DIALOG=" --ascii-lines --clear --title $t --menu 'Articles' 30 80 30 $items"
         echo $DIALOG |xargs dialog 2>$tmp
     fi
     case $? in
@@ -100,7 +100,7 @@ read_rss(){
             arti_no=`cat  $tmp`
             arti_no=$(($arti_no-1))
             arti_conent=`cat $dir/${1}.articles/$arti_no`
-            dialog --title 'Content' --msgbox "$arti_conent"  20 100
+            dialog --ascii-lines --title 'Content' --msgbox "$arti_conent"  20 100
             read_rss ${1}
             ;;
         1)
@@ -110,11 +110,11 @@ read_rss(){
 }
 delete(){
     if [ ! -s $feed_ls ];then
-        dialog --title 'Empty' --msgbox 'List empty, Nothing to delete' 5 45
+        dialog --ascii-lines --title 'Empty' --msgbox 'List empty, Nothing to delete' 5 45
         return
     fi
     tmp=`env mktemp $dir/tmp.XXX`
-    DIALOG=' --menu "Feeds" 12 40 10'
+    DIALOG=' --ascii-lines --menu "Feeds" 12 40 10'
     while read n t u;do
         t=`echo $t|sed 's/_/ /g'|awk '{printf "\"%s\"",$0}'`
         DIALOG="$DIALOG $n $t"
@@ -127,7 +127,7 @@ delete(){
             store=`cat $feed_ls|grep $choice|awk '{print $2}'`
             rm -rf $dir/$store*
             sed -i -e $del $feed_ls
-            dialog --title 'Deleted' --msgbox 'Success' 5 20
+            dialog --ascii-lines --title 'Deleted' --msgbox 'Success' 5 20
             cat $feed_ls|awk '{print NR,$2,$3}' > $tmp
             cat $tmp > $feed_ls
             ;;
@@ -135,16 +135,16 @@ delete(){
             return
             ;;
        255)
-            dialog --title 'Oops' --msgbox 'ESC Pressed' 5 20
+            dialog --ascii-lines --title 'Oops' --msgbox 'ESC Pressed' 5 20
     esac
 }
 update(){
     tmp=`env mktemp $dir/tmp.XXX`
     if [ ! -s $feed_ls ];then
-        dialog --title 'Empty' --msgbox 'List empty, Subscribe first' 5 35
+        dialog --ascii-lines --title 'Empty' --msgbox 'List empty, Subscribe first' 5 35
         return
     fi
-    DIALOG=' --checklist "Feeds" 12 40 10'
+    DIALOG=' --ascii-lines --checklist "Feeds" 12 40 10'
     while read n t u;do
         t=`echo $t|sed 's/_/ /g'|awk '{printf "\"%s\"",$0}'`
         DIALOG="$DIALOG $n $t 0"
@@ -177,7 +177,7 @@ update(){
             echo XXX
             echo "Please wait...($counter% )"
             echo XXX
-        done | dialog --title "Updating ${feed_title}" --gauge "Please wait..." 7 70 0
+        done | dialog --ascii-lines --title "Updating ${feed_title}" --gauge "Please wait..." 7 70 0
         cat $dir/${feed_title}.items|awk '{printf "%s \"%s\" ",NR,$0}' > $tmp
         cat $tmp > $dir/${feed_title}.items
     done
@@ -203,7 +203,7 @@ action(){
             menu
             ;;
         Q|*)
-            dialog --title 'Leaving RSSng' --msgbox 'Bye Bye!' 5 20
+            dialog --ascii-lines --title 'Leaving RSSng' --msgbox 'Bye Bye!' 5 20
             exit
             ;;
     esac
