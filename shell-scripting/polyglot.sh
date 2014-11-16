@@ -42,12 +42,22 @@ while getopts ":hl:o:s:c:" flag ; do
     esac
 done
 if [ -z $src ];then
-    echo "No source code spicified...exiting"
+    echo "Error: No source code spicified...exiting"
     help
     exit
 elif [ -z $lang ];then
-    echo "No language spicified"
+    echo "Error: No language spicified"
     exit
+fi
+if [ $c_cpr ];then
+    if !( echo $lang |env grep -cE '[Cc]|[Cc]([p\+])\1|cc'>/dev/null) ;then
+        echo "Warning: compiler is specified without selecting C/C++ as language"
+    fi
+fi
+if [ "$o_name" != "sa.out" ];then
+    if !( echo $lang |env grep -cE '[Cc]|[Cc]([p\+])\1|cc|[Hh]askell$|^hs'>/dev/null) ;then
+        echo "Warning: output name is specified but no target will need it"
+    fi
 fi
 arr=`env echo $lang |sed 's/,/ /g'`
 for key in $arr;do
@@ -58,7 +68,7 @@ for key in $arr;do
         fi
         $polyglot -o $o_name $src;./$o_name
     fi
-    if echo $key |env grep -cE '^[Cc]([p\+])\1$|cc$' > /dev/null;then
+    if echo $key |env grep -cE '^[Cc]([p\+])\1$|^cc$' > /dev/null;then
         polyglot=`env which g++`
         if [ "$c_cpr" = "clang++"  ] || [ "$c_cpr" = "clang++" ]; then
             polyglot=`env which clang++`
@@ -67,7 +77,7 @@ for key in $arr;do
     fi
     if echo $key |env grep -cE '^awk$|^AWK$' > /dev/null;then
         polyglot=`env which awk`
-        $polyglot $src
+        $polyglot -f $src
     fi
     if echo $key |env grep -cE '^[Pp]erl$' > /dev/null;then
         polyglot=`env which perl`

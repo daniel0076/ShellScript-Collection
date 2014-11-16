@@ -1,11 +1,11 @@
 BEGIN{
-    printf("\033[2J");
     srand()
+    printf("\033[2J");
     size=30;
     for(h=0;h<size;h++){
         for(w=0;w<size;w++){
             map[h,w]=(rand() >= 0.5)?1:0;
-            tmp[h,w]=map[h,w]
+            tmp[h,w]=map[h,w];
         }
     }
     {
